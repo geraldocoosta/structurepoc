@@ -4,30 +4,38 @@ import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
-import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.criteria.CriteriaBuilder;
 
-@Singleton
+@ApplicationScoped
 public class HibernateUtil implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
 	private static final String PERSISTENCE_UNIT_NAME = "mercado-test-rest";
 
-	private EntityManagerFactory emf;
+	private EntityManagerFactory factory;
 
 	@PostConstruct
 	public void loadEntityManagerFactory() {
-		emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+		factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
 	}
 
 	@Produces
 	public EntityManager getEntityManager() {
-		return emf.createEntityManager();
+		return factory.createEntityManager();
+	}
+	
+	@Produces
+	public CriteriaBuilder getCriteriaBuilder() {
+		return getEntityManager().getCriteriaBuilder();
 	}
 
 	public void close(@Disposes EntityManager em) {
@@ -38,7 +46,11 @@ public class HibernateUtil implements Serializable {
 
 	@PreDestroy
 	public void preDestroy() {
-		emf.close();
+		factory.close();
 	}
+	
+    public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
+        factory.createEntityManager().close();
+    }
 
 }
