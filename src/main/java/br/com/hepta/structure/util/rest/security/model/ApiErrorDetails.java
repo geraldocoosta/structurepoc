@@ -1,4 +1,4 @@
-package br.com.hepta.structure.util.rest;
+package br.com.hepta.structure.util.rest.security.model;
 
 public class ApiErrorDetails {
 

@@ -8,8 +8,8 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import br.com.hepta.structure.util.rest.ApiErrorDetails;
 import br.com.hepta.structure.util.rest.exception.AccessDeniedException;
+import br.com.hepta.structure.util.rest.security.model.ApiErrorDetails;
 
 @Provider
 public class AccessDeniedExceptionMapper  implements ExceptionMapper<AccessDeniedException> {
