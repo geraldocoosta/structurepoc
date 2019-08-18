@@ -1,4 +1,4 @@
-package br.com.hepta.structure.util.rest.security;
+package br.com.hepta.structure.util.rest.security.filters;
 
 import java.io.IOException;
 
@@ -13,6 +13,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
 import br.com.hepta.structure.bean.LoginBean;
+import br.com.hepta.structure.util.rest.security.CheckTokenHeader;
+import br.com.hepta.structure.util.rest.security.SecurityContextApplication;
 import io.jsonwebtoken.Claims;
 
 @Provider

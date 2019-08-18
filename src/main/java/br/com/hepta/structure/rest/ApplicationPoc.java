@@ -9,8 +9,8 @@ import javax.ws.rs.core.Application;
 import br.com.hepta.structure.rest.resources.LoginService;
 import br.com.hepta.structure.util.rest.exception.InvalidTokenException;
 import br.com.hepta.structure.util.rest.exception.mapper.AccessDeniedExceptionMapper;
-import br.com.hepta.structure.util.rest.security.AuthenticationFilter;
-import br.com.hepta.structure.util.rest.security.AuthorizationFilter;
+import br.com.hepta.structure.util.rest.security.filters.AuthenticationFilter;
+import br.com.hepta.structure.util.rest.security.filters.AuthorizationFilter;
 
 
 @ApplicationPath("")

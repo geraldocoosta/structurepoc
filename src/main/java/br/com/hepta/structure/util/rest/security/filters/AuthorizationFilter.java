@@ -1,4 +1,4 @@
-package br.com.hepta.structure.util.rest.security;
+package br.com.hepta.structure.util.rest.security.filters;
 
 import java.lang.reflect.Method;
 

@@ -11,6 +11,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.SecurityContext;
 
 import br.com.hepta.structure.model.enums.NivelAcesso;
+import br.com.hepta.structure.util.rest.security.filters.AuthenticationFilter;
 import io.jsonwebtoken.Claims;
 
 public class SecurityContextApplication implements SecurityContext {
