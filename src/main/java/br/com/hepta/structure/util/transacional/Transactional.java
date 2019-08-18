@@ -1,4 +1,4 @@
-package br.com.hepta.structure.transacional;
+package br.com.hepta.structure.util.transacional;
 
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
@@ -6,7 +6,7 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
 
-import br.com.hepta.structure.transacional.annotation.Transacional;
+import br.com.hepta.structure.util.transacional.annotation.Transacional;
 
 @Interceptor
 @Transacional

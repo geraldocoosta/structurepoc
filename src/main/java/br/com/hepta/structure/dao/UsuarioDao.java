@@ -26,17 +26,17 @@ public class UsuarioDao implements Serializable {
 
 	public Usuario autenticaUsuario(Usuario usuario) {
 		try {
-			 @SuppressWarnings("unchecked")
-				List<Object[]> resultList = manager.createNativeQuery("SELECT user.id, user.nome, nivel.niveisAcesso "
-						+ "FROM usuario_niveisacesso nivel INNER JOIN usuario user "
-						+ "ON nivel.Usuario_id = user.id where user.nome = :nome AND user.pass = :pass")
-					.setParameter("nome", usuario.getNome())
-					.setParameter("pass", usuario.getPass())
-					.getResultList();
-				
-				Usuario user = montaUsuario(resultList);
-				
-				return user;
+			@SuppressWarnings("unchecked")
+			List<Object[]> resultList = manager.createNativeQuery("SELECT user.id, user.nome, nivel.niveisAcesso "
+					+ "FROM usuario_niveisacesso nivel INNER JOIN usuario user "
+					+ "ON nivel.Usuario_id = user.id where user.nome = :nome AND user.pass = :pass")
+				.setParameter("nome", usuario.getNome())
+				.setParameter("pass", usuario.getPass())
+				.getResultList();
+			
+			Usuario user = montaUsuario(resultList);
+			
+			return user;
 		} catch (NoResultException e) {
 			throw new RuntimeException(e);
 		}

@@ -1,4 +1,4 @@
-package br.com.hepta.structure.rest.security;
+package br.com.hepta.structure.util.rest.security;
 
 import java.io.IOException;
 
@@ -24,49 +24,29 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
 	@Inject
 	LoginBean userBean;
+	
+	@Inject
+	CheckTokenHeader checkToken;
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 
-		// Pegando o header authorization
 		String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-
-		// validando o cabeçalho autorization
-		if (!isTokenBasedAuthentication(authorizationHeader)) {
-			abortWithUnauthorized(requestContext);
+		if (checkToken.isTokenBasedAuthentication(authorizationHeader)) {
+			try {
+				Claims claims = checkToken.extractClaim(authorizationHeader);
+				modificarRequestContext(requestContext, claims);
+			} catch (Exception e) {
+				abortWithUnauthorized(requestContext);
+			}
 			return;
 		}
-
-		// pegando token se ele for valido
-		String token = authorizationHeader.substring(AUTHENTICATION_SCHEME.length()).trim();
-
-		try {
-			validateToken(token, requestContext);
-		} catch (Exception e) {
-			abortWithUnauthorized(requestContext);
-		}
-
-	}
-
-	private void validateToken(String token, ContainerRequestContext requestContext) throws Exception {
-		Claims claims = userBean.validaToken(token);
-
-		if (claims == null) {
-			throw new Exception("Token invalido");
-		}
-		modificarRequestContext(requestContext, claims);
-
 	}
 
 	private void abortWithUnauthorized(ContainerRequestContext requestContext) {
 		requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
-
 	}
 
-	private boolean isTokenBasedAuthentication(String authorizationHeader) {
-		return authorizationHeader != null
-				&& authorizationHeader.toLowerCase().startsWith(AUTHENTICATION_SCHEME.toLowerCase() + " ");
-	}
 
 	private void modificarRequestContext(ContainerRequestContext requestContext, Claims claims) {
 		requestContext.setSecurityContext(new SecurityContextApplication(requestContext, claims));

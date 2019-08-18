@@ -5,7 +5,7 @@
 	bean-discovery-mode="all" version="2.0">
 
 	<interceptors>
-		<class>br.com.hepta.structure.transacional.Transactional</class>
+		<class>br.com.hepta.structure.util.transacional.Transactional</class>
 	</interceptors>
 	
 </beans>

@@ -19,12 +19,6 @@ public class Usuario {
 	public Usuario() {
 	}
 
-	public Usuario(Integer id, String nome, Set<NivelAcesso> niveisAcesso) {
-		this.id = id;
-		this.nome = nome;
-		this.niveisAcesso = niveisAcesso;
-	}
-
 	public Usuario(Integer id, String nome) {
 		this.id = id;
 		this.nome = nome;
@@ -76,11 +70,6 @@ public class Usuario {
 
 	public void setNiveisAcesso(Set<NivelAcesso> niveisAcesso) {
 		this.niveisAcesso = niveisAcesso;
-	}
-
-	@Override
-	public String toString() {
-		return "Usuario [id=" + id + ", nome=" + nome + ", pass=" + pass + ", niveisAcesso=" + niveisAcesso + "]";
 	}
 
 }

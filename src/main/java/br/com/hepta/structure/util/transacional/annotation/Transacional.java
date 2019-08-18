@@ -1,4 +1,4 @@
-package br.com.hepta.structure.transacional.annotation;
+package br.com.hepta.structure.util.transacional.annotation;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;

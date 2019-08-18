@@ -10,7 +10,8 @@ import javax.xml.bind.DatatypeConverter;
 
 import br.com.hepta.structure.dao.UsuarioDao;
 import br.com.hepta.structure.model.Usuario;
-import br.com.hepta.structure.transacional.annotation.Transacional;
+import br.com.hepta.structure.model.enums.NivelAcesso;
+import br.com.hepta.structure.util.transacional.annotation.Transacional;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -21,6 +22,7 @@ public class LoginBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final String FRASE_SEGREDO = "capacete0asd*-12AsdWWdsadansidasdasDASCAjscasjicahusid123123dhs9dqw4q8w9d7q8weqweQWDASDHASD12312dsad79817231@#!@dasjidosaidhwEFHIFSDFkasdauhsdasd1a5s9daspkasdASdAKXZXIASdasduwd!@asd";
 	private UsuarioDao usuarioDao;
+	private SignatureAlgorithm algoritimoAssinatura;
 
 	@Inject
 	public LoginBean(UsuarioDao usuarioDao) {
@@ -36,22 +38,22 @@ public class LoginBean implements Serializable {
 		return usuarioDao.autenticaUsuario(usuario);
 	}
 
-	public String emiteToken(Usuario usuario, int diasParaExpirar) {
-		SignatureAlgorithm algoritimoAssinatura = SignatureAlgorithm.HS512;
+	public String emiteToken(Usuario usuario) {
+		algoritimoAssinatura = SignatureAlgorithm.HS512;
 
 		Date agora = new Date();
 
 		Calendar expira = Calendar.getInstance();
-		expira.add(Calendar.DAY_OF_MONTH, diasParaExpirar);
+		expira.add(Calendar.DAY_OF_MONTH, 1);
 
 		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(FRASE_SEGREDO);
 		SecretKeySpec key = new SecretKeySpec(apiKeySecretBytes, algoritimoAssinatura.getJcaName());
 
 		JwtBuilder construtor = Jwts.builder()
-				.setIssuedAt(agora)// Data que o token foi gerado
-				.setIssuer(usuario.getNome())// Coloca o login do usuário mais podia qualquer outra informação
-				.signWith(key, algoritimoAssinatura)// coloca o algoritmo de assinatura e frase segredo já encodada
-				.setExpiration(expira.getTime())// coloca até que data que o token é valido
+				.setIssuedAt(agora)
+				.setIssuer(usuario.getNome())
+				.signWith(key, algoritimoAssinatura)
+				.setExpiration(expira.getTime())
 				.claim("niveis-acesso", usuario.getNiveisAcesso());
 
 		return construtor.compact();
@@ -67,7 +69,27 @@ public class LoginBean implements Serializable {
 		} catch (Exception ex) {
 			throw ex;
 		}
+	}
 
+	public String refreshToken(Claims claims) {
+		algoritimoAssinatura = SignatureAlgorithm.HS512;
+
+		Date agora = new Date();
+
+		Calendar expira = Calendar.getInstance();
+		expira.add(Calendar.DAY_OF_MONTH, 1);
+
+		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(FRASE_SEGREDO);
+		SecretKeySpec key = new SecretKeySpec(apiKeySecretBytes, algoritimoAssinatura.getJcaName());
+
+		JwtBuilder construtor = Jwts.builder()
+				.setIssuedAt(agora)
+				.setIssuer(claims.getIssuer())
+				.signWith(key, algoritimoAssinatura)
+				.setExpiration(expira.getTime())
+				.claim("niveis-acesso",	claims.getOrDefault("niveis-acesso", NivelAcesso.NORMAL.toString()));
+
+		return construtor.compact();
 	}
 
 }

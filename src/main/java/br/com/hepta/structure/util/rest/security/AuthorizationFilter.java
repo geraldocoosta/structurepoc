@@ -1,8 +1,6 @@
-package br.com.hepta.structure.rest.security;
+package br.com.hepta.structure.util.rest.security;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.AccessDeniedException;
 
 import javax.annotation.Priority;
 import javax.annotation.security.DenyAll;
@@ -16,6 +14,8 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
+import br.com.hepta.structure.util.rest.exception.AccessDeniedException;
+
 @Provider
 @Dependent
 @Priority(Priorities.AUTHORIZATION)
@@ -25,7 +25,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 	private ResourceInfo resourceInfo;
 
 	@Override
-	public void filter(ContainerRequestContext requestContext) throws IOException {
+	public void filter(ContainerRequestContext requestContext) {
 		Method method = resourceInfo.getResourceMethod();
 		if (method.isAnnotationPresent(DenyAll.class)) {
 			refuseRequest();

@@ -1,4 +1,4 @@
-package br.com.hepta.structure.rest.security;
+package br.com.hepta.structure.util.rest.security;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -48,8 +48,12 @@ public class SecurityContextApplication implements SecurityContext {
 
 	private Set<NivelAcesso> extractAuthoritiesFromClaims(@NotNull Claims claims) {
 		@SuppressWarnings("unchecked")
-		List<String> rolesAsString = (List<String>) claims.getOrDefault("niveis-acesso",new ArrayList<>());
+		List<String> rolesAsString = (List<String>) claims.getOrDefault("niveis-acesso", new ArrayList<>());
 		return rolesAsString.stream().map(NivelAcesso::valueOf).collect(Collectors.toSet());
+	}
+	
+	public Claims getClaims() {
+		return claims;
 	}
 
 }

@@ -1,4 +1,4 @@
-package br.com.hepta.structure.persistence;
+package br.com.hepta.structure.util.persistence;
 
 import java.io.Serializable;
 
@@ -12,7 +12,6 @@ import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.criteria.CriteriaBuilder;
 
 @ApplicationScoped
 public class HibernateUtil implements Serializable {
@@ -33,11 +32,6 @@ public class HibernateUtil implements Serializable {
 		return factory.createEntityManager();
 	}
 	
-	@Produces
-	public CriteriaBuilder getCriteriaBuilder() {
-		return getEntityManager().getCriteriaBuilder();
-	}
-
 	public void close(@Disposes EntityManager em) {
 		if (em.isOpen()) {
 			em.close();
