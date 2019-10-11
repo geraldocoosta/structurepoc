@@ -5,13 +5,16 @@ import java.util.Enumeration;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -39,7 +42,7 @@ public class LoginService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
 	public Response primeiroTeste(Usuario usuario) {
-
+		
 		
 		
 		Enumeration<String> headerNames = request.getHeaderNames();
@@ -49,15 +52,28 @@ public class LoginService {
 			System.out.println(headerName + " => "+header);
 		}
 		
+		String setCookieHeader = "teste=id; Path=/mercado; HttpOnly";
 		try {
 			Usuario usuarioLogado = usuarioBean.autentica(usuario);
 			AuthenticationToken authenticationToken = new AuthenticationToken(usuarioBean.emiteToken(usuarioLogado));
-			return Response.ok(authenticationToken).build();
+//			HttpSession session = request.getSession();
+//			session.setAttribute("teste", "teste");
+			return Response.ok(authenticationToken).header("Set-Cookie", setCookieHeader).build();
 		} catch (Exception e) {
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.UNAUTHORIZED).cookie(new NewCookie("teste", "qualquer")).build();
 		}
 	}
 
+	@GET
+	@Path("/teste")
+	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
+	public Response teste() {
+//		HttpSession session = request.getSession();
+//		String attribute = (String)session.getAttribute("teste");
+		return Response.ok().entity("ok").build();
+	}
+	
 	@POST
 	@Path("refresh")
 	@Produces(MediaType.APPLICATION_JSON)
