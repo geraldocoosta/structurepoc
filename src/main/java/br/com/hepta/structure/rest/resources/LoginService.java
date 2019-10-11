@@ -1,7 +1,10 @@
 package br.com.hepta.structure.rest.resources;
 
+import java.util.Enumeration;
+
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -25,6 +28,9 @@ public class LoginService {
 	@Inject
 	LoginBean usuarioBean;
 	
+	@Context
+	HttpServletRequest request;
+	
 	@Inject
 	CheckTokenHeader checkToken;
 	
@@ -33,6 +39,16 @@ public class LoginService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
 	public Response primeiroTeste(Usuario usuario) {
+
+		
+		
+		Enumeration<String> headerNames = request.getHeaderNames();
+		while(headerNames.hasMoreElements()) {
+			String headerName = headerNames.nextElement();
+			String header = request.getHeader(headerName);
+			System.out.println(headerName + " => "+header);
+		}
+		
 		try {
 			Usuario usuarioLogado = usuarioBean.autentica(usuario);
 			AuthenticationToken authenticationToken = new AuthenticationToken(usuarioBean.emiteToken(usuarioLogado));
