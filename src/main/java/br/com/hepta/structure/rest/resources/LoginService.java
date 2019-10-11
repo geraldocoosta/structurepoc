@@ -5,8 +5,8 @@ import java.util.Enumeration;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -52,7 +52,7 @@ public class LoginService {
 			System.out.println(headerName + " => "+header);
 		}
 		
-		String setCookieHeader = "teste=id; Path=/mercado; HttpOnly";
+		String setCookieHeader = "teste=qualquer coisa aqui inclusive com espaço; Path=/mercado; HttpOnly";
 		try {
 			Usuario usuarioLogado = usuarioBean.autentica(usuario);
 			AuthenticationToken authenticationToken = new AuthenticationToken(usuarioBean.emiteToken(usuarioLogado));
@@ -68,10 +68,10 @@ public class LoginService {
 	@Path("/teste")
 	@Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
-	public Response teste() {
+	public Response teste(@CookieParam("teste") String strCookie) {
 //		HttpSession session = request.getSession();
 //		String attribute = (String)session.getAttribute("teste");
-		return Response.ok().entity("ok").build();
+		return Response.ok().entity(strCookie).build();
 	}
 	
 	@POST
