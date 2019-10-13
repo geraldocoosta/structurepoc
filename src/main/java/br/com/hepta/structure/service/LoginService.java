@@ -1,23 +1,26 @@
-package br.com.hepta.structure.bean;
+package br.com.hepta.structure.service;
 
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 import javax.xml.bind.DatatypeConverter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import br.com.hepta.structure.dao.UsuarioDao;
 import br.com.hepta.structure.model.Usuario;
-import br.com.hepta.structure.model.enums.NivelAcesso;
 import br.com.hepta.structure.util.transacional.annotation.Transacional;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-public class LoginBean implements Serializable {
+public class LoginService implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private static final String FRASE_SEGREDO = "capacete0asd*-12AsdWWdsadansidasdasDASCAjscasjicahusid123123dhs9dqw4q8w9d7q8weqweQWDASDHASD12312dsad79817231@#!@dasjidosaidhwEFHIFSDFkasdauhsdasd1a5s9daspkasdASdAKXZXIASdasduwd!@asd";
@@ -25,7 +28,7 @@ public class LoginBean implements Serializable {
 	private SignatureAlgorithm algoritimoAssinatura;
 
 	@Inject
-	public LoginBean(UsuarioDao usuarioDao) {
+	public LoginService(UsuarioDao usuarioDao) {
 		this.usuarioDao = usuarioDao;
 	}
 
@@ -38,7 +41,7 @@ public class LoginBean implements Serializable {
 		return usuarioDao.autenticaUsuario(usuario);
 	}
 
-	public String emiteToken(Usuario usuario) {
+	public String emiteToken(Usuario usuario) throws JsonProcessingException {
 		algoritimoAssinatura = SignatureAlgorithm.HS512;
 
 		Date agora = new Date();
@@ -49,12 +52,15 @@ public class LoginBean implements Serializable {
 		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(FRASE_SEGREDO);
 		SecretKeySpec key = new SecretKeySpec(apiKeySecretBytes, algoritimoAssinatura.getJcaName());
 
+		ObjectMapper mapperToJson = new ObjectMapper();
+		String jsonNivelAcesso = mapperToJson.writeValueAsString(usuario.getNiveisAcesso());
+		
 		JwtBuilder construtor = Jwts.builder()
 				.setIssuedAt(agora)
 				.setIssuer(usuario.getNome())
 				.signWith(key, algoritimoAssinatura)
 				.setExpiration(expira.getTime())
-				.claim("niveis-acesso", usuario.getNiveisAcesso());
+				.claim("niveis-acesso", jsonNivelAcesso);
 
 		return construtor.compact();
 	}
@@ -87,7 +93,7 @@ public class LoginBean implements Serializable {
 				.setIssuer(claims.getIssuer())
 				.signWith(key, algoritimoAssinatura)
 				.setExpiration(expira.getTime())
-				.claim("niveis-acesso",	claims.getOrDefault("niveis-acesso", NivelAcesso.NORMAL.toString()));
+				.claim("niveis-acesso",	claims.get("nivelAcesso", Set.class));
 
 		return construtor.compact();
 	}

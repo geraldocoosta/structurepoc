@@ -1,16 +1,16 @@
 package br.com.hepta.structure.util.rest.security;
 
+import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.SecurityContext;
 
-import br.com.hepta.structure.model.enums.NivelAcesso;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.hepta.structure.model.NivelAcesso;
 import br.com.hepta.structure.util.rest.security.filters.AuthenticationFilter;
 import io.jsonwebtoken.Claims;
 
@@ -32,8 +32,8 @@ public class SecurityContextApplication implements SecurityContext {
 
 	@Override
 	public boolean isUserInRole(String role) {
-		Set<NivelAcesso> niveisAcesso = extractAuthoritiesFromClaims(claims);
-		return niveisAcesso.contains(NivelAcesso.valueOf(role));
+		List<NivelAcesso> niveisAcesso = extractAuthoritiesFromClaims(claims);
+		return niveisAcesso.stream().anyMatch(nivel -> nivel.getNomeNivelAcesso().equals(role));
 	}
 
 	@Override
@@ -47,10 +47,18 @@ public class SecurityContextApplication implements SecurityContext {
 		return AuthenticationFilter.AUTHENTICATION_SCHEME;
 	}
 
-	private Set<NivelAcesso> extractAuthoritiesFromClaims(@NotNull Claims claims) {
-		@SuppressWarnings("unchecked")
-		List<String> rolesAsString = (List<String>) claims.getOrDefault("niveis-acesso", new ArrayList<>());
-		return rolesAsString.stream().map(NivelAcesso::valueOf).collect(Collectors.toSet());
+	private List<NivelAcesso> extractAuthoritiesFromClaims(@NotNull Claims claims) {
+		try {
+			String jsonNivelAcesso = claims.get("niveis-acesso", String.class);
+			ObjectMapper converterJsonToObject = new ObjectMapper();
+			List<NivelAcesso> niveisAcesso = converterJsonToObject
+												.readValue(jsonNivelAcesso, 
+															converterJsonToObject.getTypeFactory().constructCollectionType(List.class, NivelAcesso.class));
+			return niveisAcesso;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public Claims getClaims() {

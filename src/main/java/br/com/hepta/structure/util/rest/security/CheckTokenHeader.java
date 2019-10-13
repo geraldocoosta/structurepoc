@@ -2,7 +2,7 @@ package br.com.hepta.structure.util.rest.security;
 
 import javax.inject.Inject;
 
-import br.com.hepta.structure.bean.LoginBean;
+import br.com.hepta.structure.service.LoginService;
 import br.com.hepta.structure.util.rest.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 
@@ -10,7 +10,7 @@ public class CheckTokenHeader {
 	private static final String AUTHENTICATION_SCHEME = "BEARER";
 	
 	@Inject
-	LoginBean userBean;
+	LoginService userBean;
 	
 	public CheckTokenHeader() {
 	}

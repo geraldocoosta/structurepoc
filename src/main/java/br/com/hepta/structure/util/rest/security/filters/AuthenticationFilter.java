@@ -12,7 +12,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
-import br.com.hepta.structure.bean.LoginBean;
+import br.com.hepta.structure.service.LoginService;
 import br.com.hepta.structure.util.rest.security.CheckTokenHeader;
 import br.com.hepta.structure.util.rest.security.SecurityContextApplication;
 import io.jsonwebtoken.Claims;
@@ -25,7 +25,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	public static final String AUTHENTICATION_SCHEME = "Bearer";
 
 	@Inject
-	LoginBean userBean;
+	LoginService userBean;
 	
 	@Inject
 	CheckTokenHeader checkToken;

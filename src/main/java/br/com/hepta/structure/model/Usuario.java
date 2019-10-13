@@ -3,15 +3,11 @@ package br.com.hepta.structure.model;
 import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import br.com.hepta.structure.model.enums.NivelAcesso;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Usuario {
@@ -35,8 +31,7 @@ public class Usuario {
 	@Column(nullable = false)
 	private String pass;
 
-	@ElementCollection(targetClass = NivelAcesso.class)
-	@Enumerated(EnumType.STRING)
+	@OneToMany
 	@Column(nullable = false)
 	private Set<NivelAcesso> niveisAcesso;
 

@@ -1,11 +1,12 @@
 package br.com.hepta.structure;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import javax.persistence.EntityManager;
 
+import br.com.hepta.structure.model.NivelAcesso;
 import br.com.hepta.structure.model.Usuario;
-import br.com.hepta.structure.model.enums.NivelAcesso;
 import br.com.hepta.structure.util.persistence.HibernateUtil;
 
 public class Teste {
@@ -17,16 +18,23 @@ public class Teste {
 		
 		em.getTransaction().begin();
 		
-		HashSet<NivelAcesso> hashSet = new HashSet<NivelAcesso>();
-		hashSet.add(NivelAcesso.ADMIN);
-		hashSet.add(NivelAcesso.DEV);
+		NivelAcesso nivel = new NivelAcesso();
+		nivel.setNomeNivelAcesso("ADMIN");
+		NivelAcesso nivel1 = new NivelAcesso();
+		nivel1.setNomeNivelAcesso("DEV");
+		NivelAcesso nivel2 = new NivelAcesso();
+		nivel2.setNomeNivelAcesso("NORMAL");
+		em.persist(nivel);
+		em.persist(nivel1);
+		em.persist(nivel2);
 		
-		Usuario user = new Usuario();
-		user.setNome("Geraldo");
-		user.setPass("1234");
-		user.setNiveisAcesso(hashSet);
+		Usuario usuario = new Usuario();
+		usuario.setNiveisAcesso(new HashSet<NivelAcesso>(Arrays.asList(nivel, nivel1)));
+		usuario.setNome("Geraldo");
+		usuario.setPass("1234");
 		
-		em.persist(user);
+		em.persist(usuario);
+		
 		
 		em.getTransaction().commit();
 		
