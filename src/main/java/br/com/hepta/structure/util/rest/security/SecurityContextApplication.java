@@ -2,6 +2,7 @@ package br.com.hepta.structure.util.rest.security;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -48,17 +49,15 @@ public class SecurityContextApplication implements SecurityContext {
 	}
 
 	private List<NivelAcesso> extractAuthoritiesFromClaims(@NotNull Claims claims) {
-		try {
 			String jsonNivelAcesso = claims.get("niveis-acesso", String.class);
 			ObjectMapper converterJsonToObject = new ObjectMapper();
-			List<NivelAcesso> niveisAcesso = converterJsonToObject
-												.readValue(jsonNivelAcesso, 
-															converterJsonToObject.getTypeFactory().constructCollectionType(List.class, NivelAcesso.class));
-			return niveisAcesso;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+			try {
+			return Arrays.asList(converterJsonToObject.readValue(jsonNivelAcesso, 
+																NivelAcesso[].class));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
 	}
 	
 	public Claims getClaims() {
